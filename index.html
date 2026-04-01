@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>정책개발연구소</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0e0e0c;
+  --bg2: #141410;
+  --bg3: #1a1a16;
+  --line: rgba(255,255,255,0.08);
+  --line2: rgba(255,255,255,0.15);
+  --text: #f0ede6;
+  --text-mid: rgba(240,237,230,0.55);
+  --text-dim: rgba(240,237,230,0.28);
+  --accent: #c8b87a;
+  --accent2: #8faa8f;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 300;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* ── 커서 */
+* { cursor: none; }
+.cursor {
+  width: 8px; height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.15s ease, opacity 0.2s;
+  transform: translate(-50%, -50%);
+}
+.cursor-ring {
+  width: 36px; height: 36px;
+  border: 1px solid rgba(200,184,122,0.4);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), width 0.3s, height 0.3s, opacity 0.2s;
+  transform: translate(-50%, -50%);
+}
+
+/* ── 네비 */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 28px 48px;
+  mix-blend-mode: normal;
+}
+nav::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, var(--bg) 0%, transparent 100%);
+  pointer-events: none;
+}
+.nav-logo {
+  
+  font-size: 14px; font-weight: 600;
+  letter-spacing: 0.5px;
+  position: relative; z-index: 1;
+}
+.nav-logo span { color: var(--accent); }
+.nav-links {
+  display: flex; gap: 36px;
+  font-size: 12px; font-weight: 400;
+  color: var(--text-mid);
+  letter-spacing: 1px;
+  position: relative; z-index: 1;
+}
+.nav-links a { transition: color 0.2s; }
+.nav-links a:hover { color: var(--text); }
+.nav-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--accent);
+  margin-right: 6px;
+}
+
+/* ── 히어로 */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 48px 80px;
+  position: relative;
+  border-bottom: 1px solid var(--line);
+}
+.hero-year {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-bottom: 32px;
+}
+.hero-title {
+  
+  font-size: clamp(52px, 8vw, 112px);
+  font-weight: 900;
+  line-height: 1.0;
+  letter-spacing: -1.5px;
+  margin-bottom: 48px;
+}
+.hero-title .line2 { color: var(--accent); }
+.hero-title .line3 { color: var(--text-mid); font-weight: 300; }
+.hero-bottom {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  border-top: 1px solid var(--line);
+  padding-top: 32px;
+}
+.hero-desc {
+  max-width: 480px;
+  font-size: 15px; color: var(--text-mid);
+  line-height: 1.9;
+}
+.hero-scroll {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--text-dim);
+  letter-spacing: 2px;
+  display: flex; align-items: center; gap: 12px;
+}
+.hero-scroll::before {
+  content: '';
+  display: block; width: 40px; height: 1px;
+  background: var(--text-dim);
+}
+
+/* ── 섹션 공통 */
+section {
+  padding: 120px 48px;
+  border-bottom: 1px solid var(--line);
+}
+.section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--accent);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 64px;
+  display: flex; align-items: center; gap: 16px;
+}
+.section-label::after {
+  content: '';
+  flex: 1; max-width: 80px;
+  height: 1px; background: var(--accent);
+  opacity: 0.4;
+}
+.section-title {
+  
+  font-size: clamp(32px, 4vw, 56px);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  margin-bottom: 24px;
+}
+
+/* ── 연구 분야 */
+.fields-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--line);
+  margin-top: 80px;
+}
+.field-item {
+  padding: 48px 40px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  transition: background 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.field-item:hover { background: var(--bg3); }
+.field-item::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0;
+  width: 0; height: 2px;
+  background: var(--accent);
+  transition: width 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.field-item:hover::after { width: 100%; }
+.field-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--text-dim);
+  margin-bottom: 20px;
+}
+.field-name {
+  
+  font-size: 20px; font-weight: 600;
+  margin-bottom: 14px;
+  line-height: 1.3;
+}
+.field-desc {
+  font-size: 13px; color: var(--text-mid);
+  line-height: 1.8;
+}
+
+/* ── 보고서 */
+.reports-list { margin-top: 64px; }
+.report-item {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 32px; align-items: start;
+  padding: 36px 0;
+  border-bottom: 1px solid var(--line);
+  transition: border-color 0.2s;
+}
+.report-item:hover { border-color: var(--line2); }
+.report-item:hover .report-title { color: var(--accent); }
+.report-year {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; color: var(--text-dim);
+  padding-top: 4px;
+}
+.report-cat {
+  font-size: 10px; color: var(--accent2);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  margin-bottom: 8px;
+  font-family: 'DM Mono', monospace;
+}
+.report-title {
+  
+  font-size: 20px; font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 8px;
+  transition: color 0.2s;
+}
+.report-authors { font-size: 12px; color: var(--text-dim); }
+.report-dl {
+  font-size: 11px; color: var(--text-mid);
+  letter-spacing: 1px;
+  padding: 10px 20px;
+  border: 1px solid var(--line2);
+  white-space: nowrap;
+  transition: all 0.2s;
+  font-family: 'DM Mono', monospace;
+  align-self: center;
+}
+.report-dl:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── 소개 */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 120px;
+  align-items: start;
+  margin-top: 64px;
+}
+.about-text { font-size: 15px; color: var(--text-mid); line-height: 2.0; }
+.about-text p + p { margin-top: 24px; }
+.about-text strong { color: var(--text); font-weight: 500; }
+.about-stats { display: flex; flex-direction: column; gap: 0; }
+.stat-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--line);
+}
+.stat-row:first-child { border-top: 1px solid var(--line); }
+.stat-label { font-size: 12px; color: var(--text-dim); letter-spacing: 1px; }
+.stat-value {
+  
+  font-size: 36px; font-weight: 700;
+  color: var(--accent);
+}
+.stat-unit { font-size: 13px; color: var(--text-mid); margin-left: 4px; }
+
+/* ── 연구진 */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  margin-top: 64px;
+}
+.team-card {
+  background: var(--bg2);
+  padding: 40px 32px;
+  transition: background 0.3s;
+}
+.team-card:hover { background: var(--bg3); }
+.team-avatar {
+  width: 56px; height: 56px;
+  border: 1px solid var(--line2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  
+  font-size: 18px; font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+.team-name {
+  
+  font-size: 17px; font-weight: 600;
+  margin-bottom: 6px;
+}
+.team-role { font-size: 12px; color: var(--accent2); margin-bottom: 12px; }
+.team-bio { font-size: 12px; color: var(--text-dim); line-height: 1.7; }
+
+/* ── 의뢰 */
+.contact-inner {
+  max-width: 700px;
+  margin: 64px auto 0;
+}
+.contact-desc {
+  font-size: 16px; color: var(--text-mid);
+  line-height: 2.0; margin-bottom: 56px;
+  border-left: 2px solid var(--accent);
+  padding-left: 24px;
+}
+.form-row { margin-bottom: 24px; }
+.form-label {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--text-dim);
+  letter-spacing: 2px; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.form-input, .form-textarea, .form-select {
+  width: 100%;
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 16px 20px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 14px; font-weight: 300;
+  outline: none;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  border-color: var(--accent);
+}
+.form-textarea { resize: vertical; min-height: 140px; }
+.form-select option { background: var(--bg2); }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.submit-btn {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-top: 8px;
+  transition: all 0.3s;
+  cursor: none;
+}
+.submit-btn:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* ── 푸터 */
+footer {
+  padding: 64px 48px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 24px;
+}
+.footer-logo {
+  
+  font-size: 13px; font-weight: 600;
+}
+.footer-logo span { color: var(--accent); }
+.footer-info {
+  font-size: 11px; color: var(--text-dim);
+  line-height: 1.9; text-align: center;
+}
+.footer-copy {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+/* ── 페이드인 */
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1);
+}
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+/* ── 반응형 */
+@media (max-width: 900px) {
+  nav { padding: 20px 24px; }
+  .nav-links { display: none; }
+  .hero { padding: 0 24px 60px; }
+  section { padding: 80px 24px; }
+  .fields-grid { grid-template-columns: 1fr; }
+  .about-grid { grid-template-columns: 1fr; gap: 60px; }
+  .team-grid { grid-template-columns: repeat(2, 1fr); }
+  .report-item { grid-template-columns: 1fr; gap: 12px; }
+  .report-year { display: none; }
+  footer { flex-direction: column; text-align: center; }
+  .footer-info { text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- 네비 -->
+<nav>
+  <div class="nav-logo"><span>정책개발</span>연구소</div>
+  <div class="nav-links">
+    <a href="#about"><span class="nav-num">01</span>소개</a>
+    <a href="#fields"><span class="nav-num">02</span>연구분야</a>
+    <a href="#reports"><span class="nav-num">03</span>보고서</a>
+    <a href="#team"><span class="nav-num">04</span>연구진</a>
+    <a href="#contact"><span class="nav-num">05</span>의뢰·문의</a>
+  </div>
+</nav>
+
+<!-- 히어로 -->
+<section class="hero">
+  <div class="hero-year">/ 2026 &nbsp;&nbsp; IKSAN · KOREA</div>
+  <h1 class="hero-title">
+    <div>더 나은 정책을</div>
+    <div class="line2">연구합니다.</div>
+    <div class="line3">정책개발연구소</div>
+  </h1>
+  <div class="hero-bottom">
+    <p class="hero-desc">
+      지역 현안부터 국가 정책까지, 실증적 데이터와 현장 중심의 연구를 통해 실질적인 정책 대안을 제시합니다.
+    </p>
+    <div class="hero-scroll">SCROLL</div>
+  </div>
+</section>
+
+<!-- 소개 -->
+<section id="about">
+  <div class="section-label">소개 · About</div>
+  <h2 class="section-title fade-up">정책과 현실의<br>간극을 좁힙니다</h2>
+  <div class="about-grid">
+    <div class="about-text fade-up">
+      <p>정책개발연구소는 <strong>익산을 기반으로 한 독립 정책 연구기관</strong>입니다. 지역사회의 구체적인 문제에서 출발해, 실현 가능한 정책 대안을 연구하고 제안합니다.</p>
+      <p>단순한 보고서 생산을 넘어, <strong>정책이 실제로 작동하는 방식</strong>을 이해하고 이를 설계하는 데 집중합니다. 지방정부, 국회, 시민사회와의 협력을 통해 연구 결과가 현실 정책으로 이어지도록 합니다.</p>
+      <p>우리는 이념이 아니라 <strong>증거에 기반한 정책(Evidence-Based Policy)</strong>을 지향합니다. 데이터, 현장, 비교 사례를 통해 더 나은 선택지를 제시합니다.</p>
+    </div>
+    <div class="about-stats fade-up">
+      <div class="stat-row">
+        <span class="stat-label">설립 연도</span>
+        <span class="stat-value">2026<span class="stat-unit">년</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">연구 분야</span>
+        <span class="stat-value">6<span class="stat-unit">개</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">소재지</span>
+        <span class="stat-value" style="font-size:22px;">전북 익산</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">운영 방식</span>
+        <span class="stat-value" style="font-size:18px;">독립 연구</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 연구 분야 -->
+<section id="fields">
+  <div class="section-label">연구분야 · Fields</div>
+  <h2 class="section-title fade-up">6개 분야에 걸친<br>정책 연구</h2>
+  <div class="fields-grid">
+    <div class="field-item fade-up">
+      <div class="field-num">01</div>
+      <div class="field-name">지역개발·<br>도시재생</div>
+      <div class="field-desc">원도심 활성화, 스마트시티, 인구감소 대응 전략, 지역균형발전 정책 연구</div>
+    </div>
+    <div class="field-item fade-up" style="transition-delay:0.1s">
+      <div class="field-num">02</div>
+      <div class="field-name">산업·경제<br>정책</div>
+      <div class="field-desc">지역 산업 생태계 분석, 청년 창업 지원 정책, 식품·농업 클러스터 육성 방안</div>
+    </div>
+    <div class="field-item fade-up" style="transition-delay:0.2s">
+      <div class="field-num">03</div>
+      <div class="field-name">복지·사회<br>정책</div>
+      <div class="field-desc">돌봄 서비스 혁신, 노인·장애인 정책, 기초생활 보장 제도 개선 연구</div>
+    </div>
+    <div class="field-item fade-up" style="transition-delay:0s">
+      <div class="field-num">04</div>
+      <div class="field-name">교육·청년<br>정책</div>
+      <div class="field-desc">지역 인재 정착 방안, 교육 격차 해소, 청년 일자리 및 정주 여건 개선</div>
+    </div>
+    <div class="field-item fade-up" style="transition-delay:0.1s">
+      <div class="field-num">05</div>
+      <div class="field-name">환경·에너지<br>정책</div>
+      <div class="field-desc">탄소중립 지역 전략, 재생에너지 보급 정책, 환경 규제 합리화 방안</div>
+    </div>
+    <div class="field-item fade-up" style="transition-delay:0.2s">
+      <div class="field-num">06</div>
+      <div class="field-name">거버넌스·<br>행정 혁신</div>
+      <div class="field-desc">주민참여 행정, 지방분권 제도 설계, 공공기관 효율화 및 협력 체계 구축</div>
+    </div>
+  </div>
+</section>
+
+<!-- 보고서 -->
+<section id="reports">
+  <div class="section-label">연구보고서 · Reports</div>
+  <h2 class="section-title fade-up">최근 발간 보고서</h2>
+  <div class="reports-list">
+    <div class="report-item fade-up">
+      <div class="report-year">2026</div>
+      <div>
+        <div class="report-cat">지역개발</div>
+        <div class="report-title">익산 원도심 재생을 위한 정책 로드맵 2030</div>
+        <div class="report-authors">연구책임: 홍길동 · 공동연구: 김연구, 이정책</div>
+      </div>
+      <a href="#" class="report-dl">PDF ↓</a>
+    </div>
+    <div class="report-item fade-up" style="transition-delay:0.1s">
+      <div class="report-year">2026</div>
+      <div>
+        <div class="report-cat">청년·교육</div>
+        <div class="report-title">전북 청년 정주 여건 실태조사 및 개선 방안</div>
+        <div class="report-authors">연구책임: 홍길동 · 공동연구: 박분석</div>
+      </div>
+      <a href="#" class="report-dl">PDF ↓</a>
+    </div>
+    <div class="report-item fade-up" style="transition-delay:0.2s">
+      <div class="report-year">2026</div>
+      <div>
+        <div class="report-cat">산업·경제</div>
+        <div class="report-title">국가식품클러스터 2단계 발전 전략 연구</div>
+        <div class="report-authors">연구책임: 홍길동</div>
+      </div>
+      <a href="#" class="report-dl">PDF ↓</a>
+    </div>
+    <div class="report-item fade-up" style="transition-delay:0.3s">
+      <div class="report-year">2026</div>
+      <div>
+        <div class="report-cat">거버넌스</div>
+        <div class="report-title">인구감소 시대의 지방정부 행정 혁신 모델</div>
+        <div class="report-authors">연구책임: 홍길동 · 공동연구: 최행정</div>
+      </div>
+      <a href="#" class="report-dl">PDF ↓</a>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- 의뢰·문의 -->
+<section id="contact">
+  <div class="section-label">의뢰·문의 · Contact</div>
+  <h2 class="section-title fade-up">연구를 의뢰하거나<br>협력을 제안하세요</h2>
+  <div class="contact-inner">
+    <p class="contact-desc fade-up">
+      정책 수립, 용역 연구, 자문, 강연 등 다양한 형태의 협력이 가능합니다. 지방정부, 의회, 기업, 시민단체 모두 환영합니다.
+    </p>
+    <form onsubmit="handleSubmit(event)">
+      <div class="form-grid">
+        <div class="form-row">
+          <label class="form-label">성함 / 기관명</label>
+          <input type="text" class="form-input" placeholder="홍길동 / 익산시청">
+        </div>
+        <div class="form-row">
+          <label class="form-label">연락처</label>
+          <input type="text" class="form-input" placeholder="이메일 또는 전화번호">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">의뢰 유형</label>
+        <select class="form-select">
+          <option value="">선택해주세요</option>
+          <option>정책 연구 용역</option>
+          <option>자문 및 컨설팅</option>
+          <option>보고서 공동 작성</option>
+          <option>강연·세미나</option>
+          <option>기타 협력 제안</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label">내용</label>
+        <textarea class="form-textarea" placeholder="의뢰 내용이나 협력 제안을 자유롭게 작성해주세요."></textarea>
+      </div>
+      <button type="submit" class="submit-btn">문의 보내기 →</button>
+    </form>
+  </div>
+</section>
+
+<!-- 푸터 -->
+<footer>
+  <div class="footer-logo"><span>정책개발</span>연구소</div>
+  <div class="footer-info">
+    소장: 홍길동 &nbsp;|&nbsp; 전라북도 익산시 OO동 OOO번지<br>
+    대표전화: 063-000-0000 &nbsp;|&nbsp; 이메일: info@policy-institute.kr
+  </div>
+  <div class="footer-copy">© 2026 정책개발연구소</div>
+</footer>
+
+<script>
+// 커서
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+function animateCursor() {
+  cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+  rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+document.querySelectorAll('a, button, .field-item, .report-item, .team-card').forEach(el => {
+  el.addEventListener('mouseenter', () => { ring.style.width = '60px'; ring.style.height = '60px'; });
+  el.addEventListener('mouseleave', () => { ring.style.width = '36px'; ring.style.height = '36px'; });
+});
+
+// 페이드인
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// 폼
+function handleSubmit(e) {
+  e.preventDefault();
+  alert('문의가 접수되었습니다.\n빠른 시일 내에 연락드리겠습니다.');
+}
+</script>
+</body>
+</html>
